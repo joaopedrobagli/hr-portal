@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom'
-import { LayoutDashboard, Users, Clock } from 'lucide-react'
+import { LayoutDashboard, Users, Clock, LogOut } from 'lucide-react'
 
 const links = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard },
@@ -7,7 +7,14 @@ const links = [
   { to: '/time-tracking', label: 'Ponto', icon: Clock },
 ]
 
-export default function Sidebar() {
+interface Props {
+  user: { email: string; role: string } | null
+  onLogout: () => void
+}
+
+export default function Sidebar({ user, onLogout }: Props) {
+  const initials = user?.email?.slice(0, 2).toUpperCase() ?? 'U'
+
   return (
     <aside className="w-60 h-screen bg-white border-r border-gray-200 flex flex-col">
       <div className="px-6 py-6">
@@ -38,15 +45,24 @@ export default function Sidebar() {
         </nav>
       </div>
 
-      <div className="px-6 py-5 border-t border-gray-100">
-        <div className="flex items-center gap-3">
-          <div className="w-7 h-7 rounded-full bg-[#1B2A4A] flex items-center justify-center text-white text-xs font-medium">
-            JP
+      <div className="px-4 py-5 border-t border-gray-100">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-7 h-7 rounded-full bg-[#1B2A4A] flex items-center justify-center text-white text-xs font-medium">
+              {initials}
+            </div>
+            <div>
+              <p className="text-xs font-medium text-gray-700 truncate max-w-[100px]">{user?.email}</p>
+              <p className="text-[11px] text-gray-500 capitalize">{user?.role}</p>
+            </div>
           </div>
-          <div>
-            <p className="text-xs font-medium text-gray-700">João Pedro</p>
-            <p className="text-[11px] text-gray-500">Administrador</p>
-          </div>
+          <button
+            onClick={onLogout}
+            className="text-gray-400 hover:text-red-500 transition-colors"
+            title="Sair"
+          >
+            <LogOut size={15} />
+          </button>
         </div>
       </div>
     </aside>

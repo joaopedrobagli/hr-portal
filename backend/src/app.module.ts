@@ -6,6 +6,7 @@ import { TimeRecordsModule } from './time-records/time-records.module';
 import { AuthModule } from './auth/auth.module';
 import { Employee } from './employees/employee.entity';
 import { TimeRecord } from './time-records/time-record.entity';
+import { User } from './auth/user.entity';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { TimeRecord } from './time-records/time-record.entity';
         username: config.get('DATABASE_USER'),
         password: config.get('DATABASE_PASSWORD'),
         database: config.get('DATABASE_NAME'),
-        entities: [Employee, TimeRecord],
+        entities: [Employee, TimeRecord, User],
         synchronize: true,
       }),
       inject: [ConfigService],

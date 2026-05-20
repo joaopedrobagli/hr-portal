@@ -15,6 +15,7 @@ const time_records_module_1 = require("./time-records/time-records.module");
 const auth_module_1 = require("./auth/auth.module");
 const employee_entity_1 = require("./employees/employee.entity");
 const time_record_entity_1 = require("./time-records/time-record.entity");
+const user_entity_1 = require("./auth/user.entity");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -31,7 +32,7 @@ exports.AppModule = AppModule = __decorate([
                     username: config.get('DATABASE_USER'),
                     password: config.get('DATABASE_PASSWORD'),
                     database: config.get('DATABASE_NAME'),
-                    entities: [employee_entity_1.Employee, time_record_entity_1.TimeRecord],
+                    entities: [employee_entity_1.Employee, time_record_entity_1.TimeRecord, user_entity_1.User],
                     synchronize: true,
                 }),
                 inject: [config_1.ConfigService],
