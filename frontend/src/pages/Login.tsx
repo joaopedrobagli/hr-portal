@@ -25,6 +25,11 @@ export default function Login({ onLogin }: Props) {
     }
   }
 
+  const fillDemo = () => {
+    setEmail('admin@hrportal.com')
+    setPassword('123456')
+  }
+
   return (
     <div className="min-h-screen bg-[#F7F8FA] flex items-center justify-center">
       <div className="bg-white rounded-xl border border-gray-100 shadow-sm w-full max-w-sm p-8">
@@ -33,6 +38,18 @@ export default function Login({ onLogin }: Props) {
           <h1 className="text-xs font-semibold tracking-[0.15em] uppercase text-[#1B2A4A] mb-1">HR Portal</h1>
           <p className="text-xl font-semibold text-gray-800">Entrar na sua conta</p>
           <p className="text-sm text-gray-500 mt-1">Gestão de Pessoas</p>
+        </div>
+
+        {/* Demo banner */}
+        <div className="bg-[#EEF2FF] border border-[#1B2A4A]/10 rounded-lg px-4 py-3 mb-6">
+          <p className="text-xs font-medium text-[#1B2A4A] mb-1">Acesso demo</p>
+          <p className="text-xs text-gray-500">admin@hrportal.com / 123456</p>
+          <button
+            onClick={fillDemo}
+            className="text-xs text-[#1B2A4A] font-medium underline mt-1 hover:opacity-70 transition-opacity"
+          >
+            Preencher automaticamente
+          </button>
         </div>
 
         <div className="flex flex-col gap-4">
