@@ -1,7 +1,17 @@
 import { useState } from 'react'
-import { Search, Plus } from 'lucide-react'
+import { Search, Plus, ChevronLeft, ChevronRight } from 'lucide-react'
+import EmployeeModal from '../components/EmployeeModal'
 
-const mockEmployees = [
+interface Employee {
+  id: number
+  name: string
+  role: string
+  department: string
+  status: string
+  email: string
+}
+
+const initialEmployees: Employee[] = [
   { id: 1, name: 'João Silva', role: 'Desenvolvedor', department: 'TI', status: 'Ativo', email: 'joao@empresa.com' },
   { id: 2, name: 'Maria Souza', role: 'Designer', department: 'Marketing', status: 'Ativo', email: 'maria@empresa.com' },
   { id: 3, name: 'Carlos Lima', role: 'Analista', department: 'Financeiro', status: 'Ativo', email: 'carlos@empresa.com' },
@@ -9,22 +19,47 @@ const mockEmployees = [
   { id: 5, name: 'Pedro Santos', role: 'Desenvolvedor', department: 'TI', status: 'Ativo', email: 'pedro@empresa.com' },
 ]
 
-export default function Employees() {
-  const [search, setSearch] = useState('')
+const PER_PAGE = 4
 
-  const filtered = mockEmployees.filter(e =>
+export default function Employees() {
+  const [employees, setEmployees] = useState<Employee[]>(initialEmployees)
+  const [search, setSearch] = useState('')
+  const [modalOpen, setModalOpen] = useState(false)
+  const [page, setPage] = useState(1)
+
+  const filtered = employees.filter(e =>
     e.name.toLowerCase().includes(search.toLowerCase()) ||
     e.role.toLowerCase().includes(search.toLowerCase())
   )
 
+  const totalPages = Math.ceil(filtered.length / PER_PAGE)
+  const paginated = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE)
+
+  const handleSave = (data: { name: string; role: string; department: string; email: string }) => {
+    const newEmployee: Employee = {
+      id: employees.length + 1,
+      status: 'Ativo',
+      ...data,
+    }
+    setEmployees([newEmployee, ...employees])
+    setPage(1)
+  }
+
   return (
     <div>
+      {modalOpen && (
+        <EmployeeModal onClose={() => setModalOpen(false)} onSave={handleSave} />
+      )}
+
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-xl font-semibold text-gray-800">Funcionários</h1>
-          <p className="text-sm text-gray-500 mt-0.5">{mockEmployees.length} colaboradores cadastrados</p>
+          <p className="text-sm text-gray-500 mt-0.5">{employees.length} colaboradores cadastrados</p>
         </div>
-        <button className="flex items-center gap-2 bg-[#1B2A4A] text-white px-4 py-2 rounded-lg text-xs font-medium hover:bg-[#243660] transition-colors">
+        <button
+          onClick={() => setModalOpen(true)}
+          className="flex items-center gap-2 bg-[#1B2A4A] text-white px-4 py-2 rounded-lg text-xs font-medium hover:bg-[#243660] transition-colors"
+        >
           <Plus size={14} />
           Novo Funcionário
         </button>
@@ -38,7 +73,7 @@ export default function Employees() {
               type="text"
               placeholder="Buscar funcionário..."
               value={search}
-              onChange={e => setSearch(e.target.value)}
+              onChange={e => { setSearch(e.target.value); setPage(1) }}
               className="w-full pl-8 pr-4 py-2 text-sm border border-gray-200 rounded-lg outline-none focus:border-[#1B2A4A] transition-colors"
             />
           </div>
@@ -55,7 +90,7 @@ export default function Employees() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
-            {filtered.map(emp => (
+            {paginated.map(emp => (
               <tr key={emp.id} className="hover:bg-gray-50 transition-colors">
                 <td className="px-6 py-3.5">
                   <div className="flex items-center gap-3">
@@ -77,6 +112,41 @@ export default function Employees() {
             ))}
           </tbody>
         </table>
+
+        <div className="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+          <span className="text-xs text-gray-500">
+            Página {page} de {totalPages}
+          </span>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => setPage(p => Math.max(1, p - 1))}
+              disabled={page === 1}
+              className="p-1.5 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            >
+              <ChevronLeft size={14} />
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+              <button
+                key={p}
+                onClick={() => setPage(p)}
+                className={`w-7 h-7 text-xs rounded-lg border transition-colors ${
+                  p === page
+                    ? 'bg-[#1B2A4A] text-white border-[#1B2A4A]'
+                    : 'border-gray-200 text-gray-500 hover:bg-gray-50'
+                }`}
+              >
+                {p}
+              </button>
+            ))}
+            <button
+              onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+              disabled={page === totalPages}
+              className="p-1.5 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            >
+              <ChevronRight size={14} />
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   )
