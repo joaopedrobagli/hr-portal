@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Dashboard from './pages/Dashboard'
 import Employees from './pages/Employees'
 import TimeTracking from './pages/TimeTracking'
