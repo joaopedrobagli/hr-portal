@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Search, Plus, ChevronLeft, ChevronRight } from 'lucide-react'
 import EmployeeModal from '../components/EmployeeModal'
+import api from '../api'
 
 interface Employee {
   id: number
@@ -11,38 +12,46 @@ interface Employee {
   email: string
 }
 
-const initialEmployees: Employee[] = [
-  { id: 1, name: 'João Silva', role: 'Desenvolvedor', department: 'TI', status: 'Ativo', email: 'joao@empresa.com' },
-  { id: 2, name: 'Maria Souza', role: 'Designer', department: 'Marketing', status: 'Ativo', email: 'maria@empresa.com' },
-  { id: 3, name: 'Carlos Lima', role: 'Analista', department: 'Financeiro', status: 'Ativo', email: 'carlos@empresa.com' },
-  { id: 4, name: 'Ana Costa', role: 'Gerente', department: 'RH', status: 'Inativo', email: 'ana@empresa.com' },
-  { id: 5, name: 'Pedro Santos', role: 'Desenvolvedor', department: 'TI', status: 'Ativo', email: 'pedro@empresa.com' },
-]
-
 const PER_PAGE = 4
 
 export default function Employees() {
-  const [employees, setEmployees] = useState<Employee[]>(initialEmployees)
+  const [employees, setEmployees] = useState<Employee[]>([])
   const [search, setSearch] = useState('')
   const [modalOpen, setModalOpen] = useState(false)
   const [page, setPage] = useState(1)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchEmployees()
+  }, [])
+
+  const fetchEmployees = async () => {
+    try {
+      const res = await api.get('/employees')
+      setEmployees(res.data)
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const filtered = employees.filter(e =>
     e.name.toLowerCase().includes(search.toLowerCase()) ||
     e.role.toLowerCase().includes(search.toLowerCase())
   )
 
-  const totalPages = Math.ceil(filtered.length / PER_PAGE)
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE))
   const paginated = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE)
 
-  const handleSave = (data: { name: string; role: string; department: string; email: string }) => {
-    const newEmployee: Employee = {
-      id: employees.length + 1,
-      status: 'Ativo',
-      ...data,
+  const handleSave = async (data: { name: string; role: string; department: string; email: string }) => {
+    try {
+      const res = await api.post('/employees', data)
+      setEmployees([res.data, ...employees])
+      setPage(1)
+    } catch (err) {
+      console.error(err)
     }
-    setEmployees([newEmployee, ...employees])
-    setPage(1)
   }
 
   return (
@@ -90,7 +99,15 @@ export default function Employees() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
-            {paginated.map(emp => (
+            {loading ? (
+              <tr>
+                <td colSpan={5} className="px-6 py-8 text-center text-sm text-gray-400">Carregando...</td>
+              </tr>
+            ) : paginated.length === 0 ? (
+              <tr>
+                <td colSpan={5} className="px-6 py-8 text-center text-sm text-gray-400">Nenhum funcionário encontrado</td>
+              </tr>
+            ) : paginated.map(emp => (
               <tr key={emp.id} className="hover:bg-gray-50 transition-colors">
                 <td className="px-6 py-3.5">
                   <div className="flex items-center gap-3">
