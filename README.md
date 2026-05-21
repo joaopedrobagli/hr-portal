@@ -2,12 +2,12 @@
 
 Sistema interno de gestão de RH com controle de funcionários e registro de ponto.
 
-## Estrutura
+## Demo
 
-    hr-portal/
-    ├── frontend/   # React + Vite + TypeScript + Tailwind
-    ├── backend/    # NestJS + TypeScript + PostgreSQL
-    └── docker-compose.yml
+Frontend: https://hr-portal-sandy-three.vercel.app
+Backend: https://hr-portal-sc2t.onrender.com
+
+Acesso demo: admin@hrportal.com / 123456
 
 ## Tecnologias
 
@@ -22,10 +22,11 @@ Sistema interno de gestão de RH com controle de funcionários e registro de pon
 - NestJS + TypeScript
 - TypeORM + PostgreSQL
 - Docker
+- JWT Authentication
 
 ## Como rodar
 
-**1. Suba o banco**
+**1. Suba o banco com Docker**
 
     docker-compose up -d
 
@@ -46,7 +47,9 @@ Backend: http://localhost:3001
 
 ## Funcionalidades
 
-- Cadastro e listagem de funcionários
-- Busca e paginação
-- Registro de ponto com entrada e saída
-- API REST documentada
+- Autenticação JWT com login e logout
+- Cadastro e listagem de funcionários com paginação
+- Busca de funcionários
+- Controle de ponto com entrada e saída por funcionário
+- Dashboard com dados reais do banco
+- API REST completa
