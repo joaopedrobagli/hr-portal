@@ -4,8 +4,8 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
-    origin: ['http://localhost:5173', 'https://hr-portal-sandy-three.vercel.app'],
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    origin: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     credentials: true,
   });
   app.setGlobalPrefix('api');
